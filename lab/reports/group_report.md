@@ -68,7 +68,17 @@ Toàn bộ dữ liệu sạch sau Day 10 sẽ được phục vụ cho Superviso
 
 ---
 
-## 6. Rủi ro còn lại & việc chưa làm
+## 6. Kết quả Tự rà soát kỹ thuật (Self-Peer Review)
+
+Dựa trên checklist trao đổi giữa các nhóm (Slide 42), tôi đã tự kiểm tra các rủi ro:
+1. **Rerun 2 lần có duplicate không?** -> Không. Đã kiểm tra qua `chunk_id` hashing. Database giữ nguyên số lượng vector sau khi rerun bản sạch.
+2. **Freshness đo ở bước nào?** -> Đo ngay sau bước Ingest dựa trên cột `exported_at` để phản ánh đúng thực tế độ trễ của tri thức.
+3. **Record bị flag đi đâu?** -> Toàn bộ được đẩy vào `artifacts/quarantine/` với lý do lỗi cụ thể để Data Owner có thể sửa nguồn.
+
+---
+
+## 7. Rủi ro còn lại & việc chưa làm
 
 - Cần bổ sung cơ chế kiểm duyệt nội dung (Content Moderation) cho các chunk văn bản.
 - Chưa tích hợp auto-rollback nếu lượt chạy mới có tỷ lệ Quarantine quá cao.
+
