@@ -130,6 +130,18 @@ def clean_rows(
                 )
                 fixed_text += " [cleaned: stale_refund_window]"
 
+        # Rule mới 1: Chuẩn hóa khoảng trắng (Whitespace normalization)
+        fixed_text = " ".join(fixed_text.split())
+
+        # Rule mới 2: Standardization - Nếu chứa từ khóa nhạy cảm, thêm tag [CLEANED: SENSITIVE]
+        if "mật khẩu" in fixed_text.lower() or "password" in fixed_text.lower():
+            fixed_text = fixed_text.replace("mật khẩu", "********").replace("password", "********")
+            fixed_text += " [cleaned: sensitive_info_masked]"
+
+        # Rule mới 3: Cải thiện metadata - Tự động phát hiện HR Policy và chuẩn hóa
+        if doc_id == "hr_leave_policy" and "ngày nghỉ" in fixed_text.lower():
+            fixed_text = fixed_text.strip() + " (Official HR Policy)"
+
         seq += 1
         cleaned.append(
             {

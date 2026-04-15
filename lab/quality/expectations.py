@@ -112,5 +112,27 @@ def run_expectations(cleaned_rows: List[Dict[str, Any]]) -> Tuple[List[Expectati
         )
     )
 
+    # E7: Luôn có ít nhất 2 loại doc_id khác nhau (đảm bảo không bị mất toàn bộ một nguồn dữ liệu)
+    unique_docs = len(set(r.get("doc_id") for r in cleaned_rows))
+    results.append(
+        ExpectationResult(
+            "multi_source_check",
+            unique_docs >= 2,
+            "warn",
+            f"unique_docs={unique_docs}",
+        )
+    )
+
+    # E8: Độ dài trung bình của chunk phải > 50 ký tự (phát hiện dữ liệu quá mỏng)
+    avg_len = sum(len(r.get("chunk_text", "")) for r in cleaned_rows) / len(cleaned_rows) if cleaned_rows else 0
+    results.append(
+        ExpectationResult(
+            "avg_chunk_length_check",
+            avg_len > 50,
+            "warn",
+            f"avg_len={avg_len:.1f}",
+        )
+    )
+
     halt = any(not r.passed and r.severity == "halt" for r in results)
     return results, halt
